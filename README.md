@@ -2,10 +2,12 @@
 An addon to knewjade's sfinder that allows for automated searching of output files.
 
 # Please note:
-Currently this program only supports the spin, percent and path commands. It will accept others, but there is a high likelihood of it not working. You have been warned!
+Currently this program only supports the spin, percent, cover and path commands. It will accept others, but there is a high likelihood of it not working. You have been warned!
+
+# Note 2:
+If you are using the cover command, include either -M tss, tsd, tst or b2b along with any other parameters, or you will get weird solves. tss, tsd and tst guarantee you get one of the names spins, and b2b ensures you get them with no skims.
 
 # Guide for usage
-
 0.) Download sfinder from this link https://github.com/knewjade/solution-finder/releases and put the sfinder.jar file into the same directory as this read me.
 
 1.) Get a sfinder output file from a spin command being used. It will be named spin.html by default.
