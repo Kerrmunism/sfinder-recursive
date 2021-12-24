@@ -32,7 +32,7 @@ void draw() {
   seedReset = allParams[2];
   pieceLimit = int(allParams[3]);
   pieceLimit = int(pieceLimit);
-  if (pieceLimit < 0 || pieceLimit > 7) {
+  if (pieceLimit < 0) {
     pieceLimit = 5;
   }
   if (seedReset.equals("false")) {
