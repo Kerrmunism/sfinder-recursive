@@ -2,10 +2,10 @@
 if exist output/ rd output/
 if exist file.bat del file.bat
 if exist input.txt del input.txt
-echo *p7 >> "input.txt"
-echo percent -c 5 >> "input.txt"
-echo true >> "input.txt"
-echo 5 >> "input.txt"
+(echo *p7)>> "input.txt"
+(echo percent -c 5)>> "input.txt"
+(echo true)>> "input.txt"
+(echo 5)>> "input.txt"
 echo. >> "input.txt"
 echo // First line should be the seed you used to get the spin.html file. Using *p7 will also work. >> "input.txt"
 echo. >> "input.txt"
