@@ -66,7 +66,7 @@ void draw() {
     println("The value of usedPieces is " + usedPieces + "."); // Debugging info to show which pieces were used.
     int numOfPieces = usedPieces.length(); // Get the number of characters in usedPieces (which will give how many pieces were used)
     for (int j = 0; j < numOfPieces; j++) { // For every piece that was used...
-      seedString = seedString.replace("" + usedPieces.charAt(j) + "", ""); // Take the original string and check if that piece is in the original string, then replace it with a comma.
+      seedString = seedString.substring(0, seedString.indexOf(usedPieces.charAt(j))) + seedString.substring((seedString.indexOf(usedPieces.charAt(j)) + 1), seedString.length()); // Take the original string and check if that piece is in the original string, then replace it with a comma.
     }
     seedString = seedString.replace(",", "");
     seedString = seedString.replace(" ", ""); // Get rid of spaces for now
