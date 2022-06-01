@@ -26,6 +26,7 @@ String[] allParams;
 String params;
 String seedReset;
 int pieceLimit;
+int worth;
 
 public void setup() {
   fumen = createReader("output.html"); // Assign the reader to the file "output.html".
@@ -47,8 +48,10 @@ public void draw() {
   params = allParams[1];
   seedReset = allParams[2];
   pieceLimit = PApplet.parseInt(allParams[3]);
+  worth = PApplet.parseInt(allParams[4]);
+  worth = PApplet.parseInt(worth);
   pieceLimit = PApplet.parseInt(pieceLimit);
-  if (pieceLimit < 0 || pieceLimit > 7) {
+  if (pieceLimit < 0) {
     pieceLimit = 5;
   }
   if (seedReset.equals("false")) {
@@ -60,10 +63,11 @@ public void draw() {
   int endLine = fumenOutput.indexOf(" s"); // Attempt to find the end of the number in the phrase "# solutions" by searching for the space and first s.
   solutions = PApplet.parseInt(fumenOutput.substring(startLine, endLine)); // Set how many solutions there are based on the startLine and endLine.
   file.println("@echo off"); // Make it so the path directory doesn't show for every command in the batch file.
+  file.println("setlocal enabledelayedexpansion");
   file.println("if exist output rmdir /S output"); // Ask to delete the output directory if it already exists. Add /Q after /S if you don't want to be prompted.
   file.println("if not exist output mkdir output"); // Make output if it doesn't exist already.
   for (int i = 0; i < solutions; i++) { // Make a loop that will perform an action for every solution there is in the file.
-    if (seed.equals("*p7")) { // If the seed file simply reads *p7 (the placeholder value)...
+    if (seed.equals("*p7") || seed.equals("*p7 ")) { // If the seed file simply reads *p7 (the placeholder value)...
       seedString = "T,S,L,O,J,Z,I"; // Change it to a value that basically means the same thing but one that this program can interpret.
     } else {
       seedString = seed;
@@ -82,7 +86,7 @@ public void draw() {
     println("The value of usedPieces is " + usedPieces + "."); // Debugging info to show which pieces were used.
     int numOfPieces = usedPieces.length(); // Get the number of characters in usedPieces (which will give how many pieces were used)
     for (int j = 0; j < numOfPieces; j++) { // For every piece that was used...
-      seedString = seedString.replace("" + usedPieces.charAt(j) + "", ""); // Take the original string and check if that piece is in the original string, then replace it with a comma.
+      seedString = seedString.substring(0, seedString.indexOf(usedPieces.charAt(j))) + seedString.substring((seedString.indexOf(usedPieces.charAt(j)) + 1), seedString.length()); // Take the original string and check if that piece is in the original string, then replace it with a comma.
     }
     seedString = seedString.replace(",", "");
     seedString = seedString.replace(" ", ""); // Get rid of spaces for now
@@ -98,19 +102,19 @@ public void draw() {
           seedString = "[" + seedString + "]p" + seedString.length();
         }
         file.println("java -jar sfinder.jar " + params + " -P 2 --tetfu " + output + "vhAAAA -p \"" + seedString + "" + seedReset + "\" -lp output\\output-" + (i + 1) + ".txt | find \"success = \" > output\\tmp.txt"); // Put the command that runs sfinder.
-        file.println("cd output && for /F \"tokens=3 delims= \" %%f in (tmp.txt) do (echo %%f percent solve chance && ren output-" + (i + 1) + ".txt %%f" + "%-" + seedString + "-" + (i + 1) + ".txt && echo " + output + " >> %%f" + "%-" + seedString + "-" + (i + 1) + ".txt)");
-        file.println("del tmp.txt && if exist output-" + (i + 1) + ".txt del output-" + (i + 1) + ".txt");
+        file.println("cd output && for /F \"tokens=3 delims= \" %%f in (tmp.txt) do (set tem=%%f && set /a result=!tem:~0,-5! && if !result! GEQ " + worth + " (echo %%f percent solve chance && echo " + output + " >> output-" + (i + 1) + ".txt && ren output-" + (i + 1) + ".txt %%f" + "%-" + seedString + "-" + (i + 1) + ".txt))");
+        file.println("if exist output-" + (i + 1) + ".txt del output-" + (i + 1) + ".txt");
         file.println("cd ..");
       }
       if (params.contains("spin")) {
         file.println("java -jar sfinder.jar " + params + " -P 2 --tetfu " + output + "vhAAAA -p \"" + seedString + "" + seedReset + "\" -o output\\output-" + (i + 1) + ".html | find \"Found solutions = \" > output\\tmp.txt"); // Put the command that runs sfinder.
-        file.println("cd output && for /F \"tokens=4 delims= \" %%f in (tmp.txt) do (echo %%f solutions && ren output-" + (i + 1) + ".html %%f" + "-" + seedString + "-" + (i + 1) + ".html && echo " + output + " >> %%f" + "-" + seedString + "-" + (i + 1) + ".html)");
+        file.println("cd output && for /F \"tokens=4 delims= \" %%f in (tmp.txt) do (echo %%f solutions && echo " + output + " >> output-" + (i + 1) + ".html && ren output-" + (i + 1) + ".html %%f" + "-" + seedString + "-" + (i + 1) + ".html)");
         file.println("del tmp.txt && if exist output-" + (i + 1) + ".txt del output-" + (i + 1) + ".txt");
         file.println("cd ..");
       }
       if (params.contains("cover")) {
         file.println("java -jar sfinder.jar " + params + " --tetfu " + output + "vhAAAA -p \"" + seedString + "" + seedReset + "\" -lp output\\output-" + (i + 1) + ".txt | find \"fumen.zui.jp\" > output\\tmp.txt"); // Put the command that runs sfinder.
-        file.println("cd output && for /F \"tokens=1 delims= \" %%f in (tmp.txt) do (echo %%f %% coverage && ren output-" + (i + 1) + ".txt %%f" + "%%-" + seedString + "-" + (i + 1) + ".txt && echo " + output + " >> %%f" + "%%-" + seedString + "-" + (i + 1) + ".txt)");
+        file.println("cd output && for /F \"tokens=1 delims= \" %%f in (tmp.txt) do (echo %%f %% coverage && echo " + output + " >> output-" + (i + 1) + ".txt && ren output-" + (i + 1) + ".txt %%f" + "%%-" + seedString + "-" + (i + 1) + ".txt)");
         file.println("del tmp.txt && if exist output-" + (i + 1) + ".txt del output-" + (i + 1) + ".txt");
         file.println("cd ..");
       }
@@ -119,7 +123,7 @@ public void draw() {
           seedString = "[" + seedString + "]p" + seedString.length();
         }
         file.println("java -jar sfinder.jar " + params + " -P 2 --tetfu " + output + "vhAAAA -p \"" + seedString + "" + seedReset + "\" -o output\\output-" + (i + 1) + ".html | find \"Found path [minimal] = \" > output\\tmp.txt"); // Put the command that runs sfinder.
-        file.println("cd output && for /F \"tokens=5 delims= \" %%f in (tmp.txt) do (echo %%f minimals && ren output-" + (i + 1) + "_minimal.html %%f" + "-" + (i + 1) + ".html && echo " + output + " >> %%f" + "-" + (i + 1) + ".html && del output-" + (i + 1) + "_unique.html)");
+        file.println("cd output && for /F \"tokens=5 delims= \" %%f in (tmp.txt) do (echo %%f minimals && echo " + output + " >> output-" + (i + 1) + "_minimal.html && ren output-" + (i + 1) + "_minimal.html %%f" + "-" + (i + 1) + ".html && del output-" + (i + 1) + "_unique.html)");
         file.println("del tmp.txt && if exist output-" + (i + 1) + ".txt del output-" + (i + 1) + ".txt");
         file.println("cd ..");
       }
