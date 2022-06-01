@@ -50,7 +50,7 @@ void draw() {
   file.println("setlocal enabledelayedexpansion");
   file.println("if exist output rmdir /S output"); // Ask to delete the output directory if it already exists. Add /Q after /S if you don't want to be prompted.
   file.println("if not exist output mkdir output"); // Make output if it doesn't exist already.
-  for (int i = 13700; i < solutions; i++) { // Make a loop that will perform an action for every solution there is in the file.
+  for (int i = 0; i < solutions; i++) { // Make a loop that will perform an action for every solution there is in the file.
     if (seed.equals("*p7") || seed.equals("*p7 ")) { // If the seed file simply reads *p7 (the placeholder value)...
       seedString = "T,S,L,O,J,Z,I"; // Change it to a value that basically means the same thing but one that this program can interpret.
     } else {
